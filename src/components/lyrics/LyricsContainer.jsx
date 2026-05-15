@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import LyricLine from './LyricLine';
+import usePlayerStore from '../../store/usePlayerStore';
 
 // Mock synchronized lyrics data
 const songLyrics = [
@@ -7,32 +8,34 @@ const songLyrics = [
   { id: 2, text: "Neon rain falling in the dark" },
   { id: 3, text: "Synthesized heartbeats synchronize" },
   { id: 4, text: "Looking for the truth in digital eyes" },
-  { id: 5, text: "We are the echoes of a future past" },
-  { id: 6, text: "Building a universe meant to last" },
-  { id: 7, text: "Feel the frequency, let it take control" },
-  { id: 8, text: "Cinematic audio for the soul" },
 ];
 
 const LyricsContainer = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  // Pull the isPlaying state from our Zustand store
+  const isPlaying = usePlayerStore((state) => state.isPlaying);
 
-  // Simulation: Automatically advance the lyrics every 3 seconds for demonstration
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveIndex((current) => (current + 1) % songLyrics.length);
-    }, 3000); // 3 seconds per line
+    let interval;
+    // Only run the timer if the song is actually playing
+    if (isPlaying) {
+      interval = setInterval(() => {
+        setActiveIndex((current) => (current + 1) % songLyrics.length);
+      }, 3000); 
+    }
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isPlaying]); // Re-run effect when isPlaying changes
 
   return (
-    // The container is given a fixed height and hidden scrollbar so the text flows through it
-    <div className="relative w-full h-[60vh] md:h-[70vh] overflow-y-auto no-scrollbar flex flex-col items-center pt-[30vh] pb-[30vh] mask-image-fade">
+    <div className="relative w-full h-[60vh] md:h-[70vh] overflow-y-auto no-scrollbar flex flex-col items-center pt-[30vh] pb-[30vh] mask-image-fade scroll-smooth">
       {songLyrics.map((lyric, index) => (
         <LyricLine 
           key={lyric.id} 
           text={lyric.text} 
+          // Pass down isPlaying so the individual line knows if it should scroll
           isActive={index === activeIndex} 
+          isPlaying={isPlaying}
         />
       ))}
     </div>
