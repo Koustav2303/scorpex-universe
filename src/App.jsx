@@ -5,6 +5,8 @@ import LyricsSection from './components/lyrics/LyricsSection';
 import OutroSection from './components/outro/OutroSection';
 import AudioPlayer from './components/player/AudioPlayer';
 import usePlayerStore from './store/usePlayerStore';
+import VisualsSection from './components/visuals/VisualsSection';
+import DeconstructionSection from './components/deconstruction/DeconstructionSection';
 
 function App() {
   const showLyrics = usePlayerStore((state) => state.showLyrics);
@@ -15,6 +17,8 @@ function App() {
       <main>
         <Hero />
         <Library />
+        <VisualsSection />
+        <DeconstructionSection />
         {showLyrics && <LyricsSection />}
         <OutroSection />
       </main>
